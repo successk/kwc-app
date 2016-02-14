@@ -1,0 +1,114 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../kwc-top-bar/kwc-top-bar.html">
+
+<!--
+  Custom styles:
+    * --kwc-app-left-panel-width (default 250px)
+    * --kwc-app-left-panel-styles (default {} including border-right: 1px solid #aaa; box-shadow: 2px 0 4px #aaa;)
+    * --kwc-app-right-panel-width (default 250px)
+    * --kwc-app-right-panel-styles (default {} including border-left: 1px solid #aaa; box-shadow: -2px 0 4px #aaa;)
+    * --kwc-app-top-bar-height (default 50px)
+    * see kwc-top-bar
+  
+  Properties:
+    * delegated to kwc-top-bar:
+      * search
+      * logo
+      * sitename
+      * sitehome
+      * search
+      * search-placeholder
+      * delay-search
+      * delay-close-search
+-->
+<dom-module id="kwc-app">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      
+      .container {
+        margin-top: var(--kwc-app-top-bar-height, 50px);
+        flex-grow: 1;
+        display: flex;
+      }
+      
+      .left-column {
+        width: var(--kwc-app-left-panel-width, 250px);
+        overflow: auto;
+        padding: 0.5rem;
+        border-right: 1px solid #aaa;
+        box-shadow: 2px 0 4px #aaa;
+        flex-shrink: 0;
+        @apply(--kwc-app-left-panel-styles);
+      }
+      
+      .middle-column {
+        overflow: auto;
+        padding: 1rem;
+        flex-grow: 1;
+      }
+      
+      .right-column {
+        width: var(--kwc-app-right-panel-width, 250px);
+        overflow: auto;
+        padding: 0.5rem;
+        border-left: 1px solid #aaa;
+        box-shadow: -2px 0 4px #aaa;
+        flex-shrink: 0;
+        @apply(--kwc-app-right-panel-styles);
+      }
+      
+      .hidden-on-empty:empty {
+        display: none;
+      }
+    </style>
+
+    <!-- delegate -->
+    <kwc-top-bar logo="[[logo]]" sitename="[[sitename]]" sitehome="[[sitehome]]" search="[[search]]" search-placeholder="[[searchPlaceholder]]"
+                 delay-search="[[delaySearch]]" delay-close-search="[[delayCloseSearch]]">
+      <content select=".top-bar-left-menu"></content>
+      <content select=".top-bar-right-menu"></content>
+      <content select=".top-bar-search-tips"></content>
+      <content select=".top-bar-search-result"></content>
+    </kwc-top-bar>
+
+    <div class="container">
+      <section class="left-column hidden-on-empty"><content select=".left-panel"></content></section>
+      
+      <section class="middle-column">
+          <content select=".content"></content>
+      </section>
+
+      <section class="right-column hidden-on-empty"><content select=".right-panel"></content></section>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "kwc-app",
+
+      properties: {
+        search: {
+          type: Boolean,
+          value: false
+        }
+      },
+      
+      attached: function() {
+        this.addEventListener("click", function(e){
+          if (e.target instanceof HTMLAnchorElement) {
+            if (e.target.hostname === location.hostname && e.target.port === location.port) {
+              e.preventDefault()
+              document.querySelector("app-router").go(e.target.href)
+            }
+          }
+        })
+      }
+    })
+  </script>
+</dom-module>

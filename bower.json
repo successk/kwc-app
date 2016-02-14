@@ -1,0 +1,21 @@
+{
+  "name": "kwc-app",
+  "version": "0.1.0",
+  "description": "A component providing a template to create quickly a single page application",
+  "license": "MIT",
+  "main": "kwc-app.html",
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "ignore": [
+    "**/.*",
+    "bower_components"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.1.3",
+    "app-router": "^2.6.1",
+    "kwc-top-bar": "^0.1.0"
+  }
+}

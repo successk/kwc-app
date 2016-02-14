@@ -1,0 +1,183 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../app-router/app-router.html">
+<link rel="import" href="kwc-app.html">
+
+<dom-module id="index-kwc-app-show">
+  <template>
+    <style>
+      :root {
+        /*top-bar*/
+        --kwc-top-bar-bg-color: #212121;
+        --kwc-top-bar-color: #fafafa;
+        --kwc-top-bar-box-shadow: 0 2px 4px #9e9e9e;
+        --kwc-top-bar-link-menu-hover-styles: {
+          background-color: #fafafa;
+          color: #212121;
+        }
+        --kwc-top-bar-search-styles: {
+          border-bottom: 1px dotted #fff;
+        }
+        
+        /*left-panel*/
+        --kwc-app-left-panel-styles: {
+          color: #212121;
+          background-color: #eeeeee;
+        }
+        
+        /*right-panel*/
+        --kwc-app-right-panel-styles: {
+          color: #212121;
+          background-color: #eeeeee;
+        }
+      }
+      
+      .top-bar-search-result a {
+        color: #fafafa;
+        border-bottom: 1px dotted #fafafa;
+        text-decoration: none;
+      }
+      
+      .top-bar-search-result a:hover {
+        color: #fafafa;
+        border-bottom: 1px solid #fafafa;
+      }
+      
+      .top-bar-search-result .user a {
+        color: #fff;
+      }
+      
+      .top-bar-search-result .page a {
+        color: #f00;
+      }
+      
+      .top-bar-search-result .faq a {
+        color: #0f0;
+      }
+      
+      .left-panel h3 {
+        border-bottom: 1px solid #757575;
+      }
+      
+      .right-panel p {
+        font-style: italic;
+      }
+    </style>
+
+    <kwc-app logo="http://placehold.it/50x50" sitename="kwc-app" sitehome="https://github.com/successk/kwc-app" search search-placeholder="Search in my app" delay-search="500"
+    delay-close-search="1000" id="topbar">
+      <div class="top-bar-left-menu">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="./">Page 1</a></li>
+          <li><a href="./p2">Page 2</a></li>
+        </ul>
+      </div>
+
+      <div class="top-bar-right-menu">
+        <ul>
+          <li><a href="#">Sign in</a></li>
+          <li><a href="#">Sign up</a></li>
+        </ul>
+      </div>
+
+      <div class="top-bar-search-tips">
+        <ul>
+          <li>Search "user [user]" to search users only</li>
+          <li>Search "page [page]" to search pages only</li>
+          <li>Search "[search]" to search anything</li>
+        </ul>
+      </div>
+
+      <div class="top-bar-search-result">
+        <ul>
+          <template is="dom-repeat" items="[[searchResult]]">
+            <li class$="[[item.type]]"><a href="[[item.link]]">[[item.value]]</a></li>
+          </template>
+        </ul>
+      </div>
+
+      <div class="left-panel">
+        <h3>My left panel</h3>
+        <p>
+          Here you can add all elements you want in this left panel
+        </p>
+      </div>
+
+      <div class="content">
+        <app-router mode="pushstate" trailingSlash="ignore">
+          <!-- Use of /components/kwc-app is for polyserve compatibility -->
+          <app-route path="/components/kwc-app/" import="page-p1.html"></app-route>
+          <app-route path="/components/kwc-app/:id" import="page-p2.html"></app-route>
+        </app-router>
+      </div>
+
+      <div class="right-panel">
+        <h3>My right panel</h3>
+        <p>
+          Here you can add all elements you want in this right panel
+        </p>
+      </div>
+    </kwc-app>
+  </template>
+
+  <script>
+    var possibleResults = [
+      {type: "user", url: "#", value:"Kit"},
+      {type: "user", url: "#", value:"Ykaly"},
+      {type: "user", url: "#", value:"Iperu"},
+      {type: "user", url: "#", value:"Kaluild"},
+      {type: "user", url: "#", value:"Rayoet"},
+      {type: "user", url: "#", value:"Queskel"},
+      {type: "user", url: "#", value:"Vor'ani"},
+      {type: "page", url: "#", value:"Presentation"},
+      {type: "page", url: "#", value:"How are we"},
+      {type: "page", url: "#", value:"Contact"},
+      {type: "page", url: "#", value:"Home"},
+      {type: "faq", url: "#", value:"Where am I?"},
+      {type: "faq", url: "#", value:"Who am I?"},
+      {type: "faq", url: "#", value:"What the day?"},
+      {type: "faq", url: "#", value:"What the answer?"},
+    ]
+    
+    Polymer({
+      is: "index-kwc-app-show",
+
+      properties: {
+        searchResult: {
+          type: Array,
+          value: []
+        }
+      },
+      
+      listeners: {
+        "topbar.search": "_doSearch"
+      },
+      
+      _doSearch: function(e) {
+        var searchQuery = e.detail
+        if (!searchQuery) {
+          this.searchResult = []
+          return
+        }
+        // Need to use a real server in a real application
+        var user = "user"
+        var page = "page"
+        var query = searchQuery.trim().toLowerCase()
+        if (query.substr(0, user.length) === user) {
+          query = query.substr(user.length).trim()
+          this.searchResult = possibleResults
+            .filter(function(e){ return e.type === "user" })
+            .filter(function(e){ return e.value.toLowerCase().indexOf(query) >= 0 })
+        } else if (query.substr(0, page.length) === page) {
+          query = query.substr(page.length).trim()
+          this.searchResult = possibleResults
+            .filter(function(e){ return e.type === "page" })
+            .filter(function(e){ return e.value.toLowerCase().indexOf(query) >= 0 })
+        } else {
+          this.searchResult = possibleResults
+            .filter(function(e){ return e.value.toLowerCase().indexOf(query) >= 0 })
+        }
+      }
+    })
+  </script>
+</dom-module>
